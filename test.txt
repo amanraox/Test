@@ -1,0 +1,178 @@
+--- Program 1---
+
+#include<bits/stdc++.h>
+
+using namespace std;
+
+bool validate_password(string password)
+{
+    int password_length=password.length();
+    if(password_length<8)
+        return false;
+    bool have_uppercase=0;
+    bool have_lowercase=0;
+    bool have_digit=0;
+    bool have_specialchar=0;
+    string special_char="!@#$%^&*";
+    
+    for(auto &ch :password)
+        if(ch>='A' and ch<='Z')have_uppercase=1;
+        else if(ch>='a' and ch<='z')have_lowercase=1;
+        else if(ch>='0' and ch<='9')have_digit=1;
+        else if(special_char.find(ch)!=string::npos)have_specialchar=1;
+    return have_specialchar and have_digit and have_lowercase and have_uppercase;
+}
+
+int main()
+{
+    string user_password;
+    cin>>user_password;
+    if(validate_password(user_password))cout<<"True";
+    else cout<<"False";
+    return 0;
+}
+
+--- Program 2 ---
+
+// testcase
+Alice 85 90 78 92
+Bob 60 65 58 70
+Charlie 95 98 100 97
+Diana 45 50 55 48
+
+#include<bits/stdc++.h>
+
+using namespace std;
+
+vector<string> name;
+vector<vector<int>> scores;
+int score_size=4;
+int student_size=4;
+double classAverage=0;
+double passRate=0.0;
+string highestScorer="";
+void input()
+{
+    string temp;
+    vector<int> score(score_size);
+    
+    for(int i=0;i<student_size;i++)
+    {
+        cin>>temp;
+        for(int j=0;j<score_size;j++)
+            cin>>score[j];
+        name.push_back(temp);
+        scores.push_back(score);
+    }
+}
+
+void analyze_grades()
+{
+    double average;
+    double highestscore=0;
+    char grade;
+    string status;
+    cout<<'\n';
+    cout<<"Analyze Grades -\n";
+
+    for(int i=0;i<student_size;i++)
+    {
+
+        average=0;
+        cout<<name[i]<<" - average : ";
+        for(int j=0;j<score_size;j++)
+            average+=scores[i][j];
+        average=1.0*average/score_size;
+        if(highestscore<average)highestScorer=name[i],highestscore=average;
+        classAverage+=average;
+        cout<<average;
+        if(average>=60){
+            status="Pass";
+            passRate++;
+        }
+        else status="Fail";
+
+        if(average>90)grade='A';
+        else if(average>79)grade='B';
+        else if(average>69)grade='C';
+        else if(average>59)grade='D';
+        else grade='F';
+        cout<<" , grade : "<<grade<<", status : "<<status<<'\n';
+    }
+}
+
+void class_statistics()
+{
+    classAverage=classAverage/student_size;
+    passRate=passRate/student_size*100;
+    cout<<"\nClass Statistics -\n";
+    cout<<"class_average : "<<classAverage<<", highest_scorer : "<<highestScorer<<", pass_rate : "<<passRate<<'\n';
+}
+
+int main(){
+    input();
+    debug(name);
+    debug(scores);
+    analyze_grades();
+    class_statistics();
+    
+    return 0;
+}
+
+--- Program 3 ---
+
+#include<bits/stdc++.h>
+
+using namespace std;
+
+void test(){
+    // [3, 3, 5, 0, 0, 3, 1, 4]
+    // [1, 2, 3, 4, 5]
+    // [7, 6, 4, 3, 1]
+    // 8
+    // 3 1 4 4 9 2 2 6
+    // 2
+    // 5 9
+
+
+    // simulation
+    // buy1, sell1, buy2, sell2   profit
+    // 3      5     0      4        6
+    // 1      5     -1     -1       4
+    // -1     -1    -1     -1       0
+    // buy1=-infinite;
+    // initial=0
+    // buy1=max(buy1,prices[i]); its -ve
+    // sell1=max(sell1,buy1+prices[i]); make +ve
+    // buy2=max(buy2,sell1-prices[i])  buy again so possibly -ve/+ve;
+    // sell2=max(sell2,buy2+prices[i]); max remaining money
+}
+
+int max_profit(vector<int> &prices){
+    // debug(prices);
+    int buy1,buy2,sell1,sell2,n=prices.size(),ans;
+    buy1=buy2=-prices[0];
+    sell1=sell2=0;
+    // simulation of buy and sell for 2 times
+    for(int i=1;i<n;i++)
+    {
+        buy1=max(-prices[i],buy1);
+        sell1=max(sell1,prices[i]+buy1);
+        buy2=max(sell1-prices[i],buy2);
+        sell2=max(buy2+prices[i],sell2);
+    }
+    ans=sell2;
+    return ans;
+}
+
+int main(){
+
+    int n;cin>>n;
+    vector<int> prices(n);
+    for(auto&x:prices)cin>>x;
+    cout<<max_profit(prices);
+    
+    return 0;
+}
+
+
